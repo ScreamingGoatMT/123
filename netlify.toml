@@ -1,6 +1,7 @@
 [build]
-  publish = "."
-  command = "echo 'Static site ready'"
+   # If using Next.js:
+  command = "npm run build && npm run export"
+  publish = "out"
 
 [build.environment]
   NODE_VERSION = "18"
