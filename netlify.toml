@@ -3,7 +3,7 @@
   publish = "out"
 
 [build.environment]
-  NODE_VERSION = "20"      # ← use “18” or “20”, not a specific patch
+  NODE_VERSION = "24.4.0"      # ← use “18” or “20”, not a specific patch
   NETLIFY_SKIP_NEXT_PLUGIN = "true"
 
 # Simple redirect for hash-based navigation
