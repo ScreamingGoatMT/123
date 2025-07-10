@@ -1,14 +1,13 @@
 # netlify.toml
 
 [build]
-  # No build step: we simply serve the Pinegrow-exported files
-  command = "echo 'Serving Pinegrow export statically'"
-  publish = "static-site"       # ← point to your Pinegrow export folder
+  command = "bash build.sh"
+  publish = "out"
 
 [build.environment]
-  NODE_VERSION = "20"           # use LTS alias, not an exact patch
-  # stop any Next.js plugin from running (if previously installed)
+  NODE_VERSION = "20"
   NETLIFY_SKIP_NEXT_PLUGIN = "true"
+
 
 # If you need hash-based navigation in SPAs
 [[redirects]]
