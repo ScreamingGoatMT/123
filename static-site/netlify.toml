@@ -1,26 +1,29 @@
+# netlify.toml
 [build]
   command = "npm run build"
   publish = "out"
 
 [build.environment]
-  NODE_VERSION = "24.4.0"      # ← use “18” or “20”, not a specific patch
+  NODE_VERSION = "20"
   NETLIFY_SKIP_NEXT_PLUGIN = "true"
 
-# Simple redirect for hash-based navigation
+
+# If you need hash-based navigation in SPAs
 [[redirects]]
   from = "/#*"
-  to = "/index.html"
+  to   = "/index.html"
   status = 200
 
-# Headers for security and performance
+# Global security and performance headers
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options         = "DENY"
+    X-XSS-Protection        = "1; mode=block"
+    X-Content-Type-Options  = "nosniff"
+    Referrer-Policy         = "strict-origin-when-cross-origin"
 
+# Cache static assets heavily
 [[headers]]
   for = "*.svg"
   [headers.values]
@@ -46,6 +49,6 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000"
 
-# Form handling for contact form
+# Netlify Forms (if you use them)
 [[forms]]
   name = "contact"
