@@ -4,7 +4,7 @@
 
 # Ensure this is treated as a static site, not Next.js
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   NETLIFY_SKIP_NEXT_PLUGIN = "true"
 
 # Simple redirect for hash-based navigation
