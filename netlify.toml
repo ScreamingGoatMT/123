@@ -1,6 +1,6 @@
 [build]
-  # Run Next.js build + export into `out/`
-  command = "npm run build && npm run export"
+  # Just build—Next.js will output static files into "out/"
+  command = "npm run build"
   publish = "out"
 
 [build.environment]
@@ -10,10 +10,10 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options         = "DENY"
-    X-XSS-Protection        = "1; mode=block"
-    X-Content-Type-Options  = "nosniff"
-    Referrer-Policy         = "strict-origin-when-cross-origin"
+    X-Frame-Options        = "DENY"
+    X-XSS-Protection       = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin-when-cross-origin"
 
 # Caching for static assets
 [[headers]]
@@ -33,9 +33,9 @@
 
 # Netlify Forms
 [form]
-  name        = "contact"
-  action      = "/thank-you"
-  method      = "POST"
+  name         = "contact"
+  action       = "/thank-you"
+  method       = "POST"
   data-netlify = "true"
 
 # Disable the Next.js plugin so it doesn't try to publish from your repo root
