@@ -1,21 +1,27 @@
 [build]
-  # Just build—Next.js will output static files into "out/"
-  command = "npm run build"
-  publish = "out"
+  publish = "."
+  command = "chmod +x build.sh && ./build.sh"
 
+# Ensure this is treated as a static site, not Next.js
 [build.environment]
   NODE_VERSION = "18"
+  NETLIFY_SKIP_NEXT_PLUGIN = "true"
 
-# Global security headers
+# Simple redirect for hash-based navigation
+[[redirects]]
+  from = "/#*"
+  to = "/index.html"
+  status = 200
+
+# Headers for security and performance
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options        = "DENY"
-    X-XSS-Protection       = "1; mode=block"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
-    Referrer-Policy        = "strict-origin-when-cross-origin"
+    Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Caching for static assets
 [[headers]]
   for = "*.svg"
   [headers.values]
@@ -31,14 +37,16 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000"
 
-# Netlify Forms
-[form]
-  name         = "contact"
-  action       = "/thank-you"
-  method       = "POST"
-  data-netlify = "true"
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
 
-# Disable the Next.js plugin so it doesn't try to publish from your repo root
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-  enabled = false
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# Form handling for contact form
+[[forms]]
+  name = "contact"
