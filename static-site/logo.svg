@@ -1,0 +1,8 @@
+<svg width="120" height="60" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="60" fill="#1a1a1a" rx="8"/>
+  <circle cx="25" cy="30" r="12" fill="none" stroke="#00FFFF" stroke-width="2"/>
+  <path d="M20 25 Q25 20 30 25 Q25 35 20 30" fill="#00FFFF"/>
+  <text x="45" y="25" fill="white" font-size="10" font-weight="bold">SCREAMING</text>
+  <text x="45" y="40" fill="#00FFFF" font-size="10" font-weight="bold">GOAT</text>
+  <text x="45" y="52" fill="white" font-size="6">COLLECTIBLES</text>
+</svg>
