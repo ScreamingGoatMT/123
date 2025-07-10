@@ -98,10 +98,6 @@ export default function Home() {
                     src={`/merch-${i + 1}.jpg`}
                     alt={`Merch Item ${i + 1}`}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.style.display = "none"
-                      e.target.nextSibling.style.display = "flex"
-                    }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
                     <ImageIcon size={32} className="text-gray-600" />
