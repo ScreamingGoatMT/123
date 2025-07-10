@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Calendar, ImageIcon, Mail, MapPin, ExternalLink } from "lucide-react"
