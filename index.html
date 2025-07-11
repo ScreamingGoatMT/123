@@ -233,7 +233,7 @@
             </div>
         </div>
     </section>
-<!-- Gallery Section (auto-populating) -->
+<!-- Gallery Section -->
 <section id="gallery" class="py-20 bg-zinc-900 text-white px-4 md:px-6">
   <div class="max-w-7xl mx-auto">
     <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">Gallery</h2>
@@ -241,47 +241,94 @@
   </div>
 </section>
 
-<!-- Lightbox Modal -->
-<div id="lightbox-modal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center">
-  <img id="lightbox-image" src="" alt="Expanded View" class="max-w-full max-h-full rounded-lg shadow-lg border-4 border-white">
+<!-- Lightbox Modal with Arrows -->
+<div id="lightbox-modal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center touch-none">
+  <!-- Prev Button -->
+  <button id="prev-btn" class="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white text-4xl p-2 rounded-full z-50">
+    &#8592;
+  </button>
+
+  <!-- Lightbox Image -->
+  <img id="lightbox-image" src="" alt="Expanded View" class="max-w-[90%] max-h-[90%] rounded-lg shadow-lg border-4 border-white z-40 pointer-events-none">
+
+  <!-- Next Button -->
+  <button id="next-btn" class="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white text-4xl p-2 rounded-full z-50">
+    &#8594;
+  </button>
 </div>
 
-<!-- Lightbox Script -->
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const totalImages = 8;
-    const grid = document.getElementById('gallery-grid');
-    const lightboxModal = document.getElementById('lightbox-modal');
-    const lightboxImage = document.getElementById('lightbox-image');
+document.addEventListener("DOMContentLoaded", function () {
+  const totalImages = 8;
+  const grid = document.getElementById('gallery-grid');
+  const lightboxModal = document.getElementById('lightbox-modal');
+  const lightboxImage = document.getElementById('lightbox-image');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  let currentIndex = 1;
 
-    for (let i = 1; i <= totalImages; i++) {
-      const imgPath = `/images/gallery/${i}.jpg`;
-      const div = document.createElement('div');
-      div.className = "aspect-square bg-gray-800 rounded-lg relative group overflow-hidden cursor-pointer";
+  for (let i = 1; i <= totalImages; i++) {
+    const imgPath = `/images/gallery/${i}.jpg`;
+    const div = document.createElement('div');
+    div.className = "aspect-square bg-gray-800 rounded-lg relative group overflow-hidden cursor-pointer";
+    div.innerHTML = `
+      <img src="${imgPath}" alt="Gallery Item ${i}" class="w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"></div>
+    `;
+    div.onclick = () => openModal(i);
+    grid.appendChild(div);
+  }
 
-      div.innerHTML = `
-        <img src="${imgPath}" alt="Gallery Item ${i}" class="w-full h-full object-cover" />
-        <div class="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"></div>
-      `;
+  function openModal(index) {
+    currentIndex = index;
+    lightboxImage.src = `/images/gallery/${index}.jpg`;
+    lightboxModal.classList.remove("hidden");
+    lightboxModal.classList.add("flex");
+  }
 
-      div.onclick = () => {
-        lightboxImage.src = imgPath;
-        lightboxModal.classList.remove("hidden");
-        lightboxModal.classList.add("flex");
-      };
+  function closeModal() {
+    lightboxModal.classList.add("hidden");
+    lightboxModal.classList.remove("flex");
+    lightboxImage.src = "";
+  }
 
-      grid.appendChild(div);
+  function showImage(index) {
+    currentIndex = (index - 1 + totalImages) % totalImages + 1;
+    lightboxImage.src = `/images/gallery/${currentIndex}.jpg`;
+  }
+
+  nextBtn.onclick = e => { e.stopPropagation(); showImage(currentIndex + 1); };
+  prevBtn.onclick = e => { e.stopPropagation(); showImage(currentIndex - 1); };
+  lightboxModal.onclick = e => {
+    if (e.target === lightboxModal) closeModal();
+  };
+
+  // Keyboard support
+  document.addEventListener("keydown", e => {
+    if (lightboxModal.classList.contains("flex")) {
+      if (e.key === "ArrowRight") showImage(currentIndex + 1);
+      if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+      if (e.key === "Escape") closeModal();
     }
-
-    // Close modal on click
-    lightboxModal.onclick = () => {
-      lightboxModal.classList.add("hidden");
-      lightboxModal.classList.remove("flex");
-      lightboxImage.src = "";
-    };
   });
-</script>
 
+  // Touch support (mobile swiping)
+  let touchStartX = null;
+  lightboxModal.addEventListener("touchstart", e => {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+  lightboxModal.addEventListener("touchend", e => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].screenX;
+    const deltaX = touchEndX - touchStartX;
+    if (Math.abs(deltaX) > 50) {
+      if (deltaX < 0) showImage(currentIndex + 1);
+      else showImage(currentIndex - 1);
+    }
+    touchStartX = null;
+  });
+});
+</script>
 <!-- Rentals Section -->
 <section id="rentals" class="py-20 bg-black text-white px-4 md:px-6">
     <div class="max-w-7xl mx-auto">
