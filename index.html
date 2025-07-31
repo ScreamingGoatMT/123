@@ -227,78 +227,85 @@
             &#8594;
 </button>
     </div>
-    <script>
+<script>
 document.addEventListener("DOMContentLoaded", function () {
-  const totalImages = 8;
-  const grid = document.getElementById('gallery-grid');
-  const lightboxModal = document.getElementById('lightbox-modal');
-  const lightboxImage = document.getElementById('lightbox-image');
-  const prevBtn = document.getElementById('prev-btn');
-  const nextBtn = document.getElementById('next-btn');
-  let currentIndex = 1;
+  const fullImageCount = 108;   // ← total images in images/gallery
+  const displayCount   = 8;     // ← how many to show in the grid
 
-  for (let i = 1; i <= totalImages; i++) {
-    const imgPath = `/images/gallery/${i}.jpg`;
+  // 1. Build a shuffled list [1…108], then take the first 8 for the grid
+  const allFiles    = Array.from({ length: fullImageCount }, (_, i) => i + 1);
+  const shuffled    = allFiles.sort(() => Math.random() - 0.5);
+  const gridFiles   = shuffled.slice(0, displayCount);
+
+  const grid        = document.getElementById('gallery-grid');
+  const lightbox    = document.getElementById('lightbox-modal');
+  const lightboxImg = document.getElementById('lightbox-image');
+  const prevBtn     = document.getElementById('prev-btn');
+  const nextBtn     = document.getElementById('next-btn');
+
+  let currentIndex;  // will hold the “file number” of the image showing in the lightbox
+
+  // 2. Populate the grid
+  gridFiles.forEach(num => {
     const div = document.createElement('div');
     div.className = "aspect-square bg-gray-800 rounded-lg relative group overflow-hidden cursor-pointer";
     div.innerHTML = `
-      <img src="${imgPath}" alt="Gallery Item ${i}" class="w-full h-full object-cover" />
-      <div class="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"></div>
+      <img src="/images/gallery/${num}.jpg" alt="Gallery ${num}" class="w-full h-full object-cover"/>
+      <div class="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity"></div>
     `;
-    div.onclick = () => openModal(i);
+    div.onclick = () => openModal(num);
     grid.appendChild(div);
-  }
+  });
 
-  function openModal(index) {
-    currentIndex = index;
-    lightboxImage.src = `/images/gallery/${index}.jpg`;
-    lightboxModal.classList.remove("hidden");
-    lightboxModal.classList.add("flex");
+  function openModal(num) {
+    currentIndex = num;
+    lightboxImg.src = `/images/gallery/${num}.jpg`;
+    lightbox.classList.replace("hidden","flex");
   }
 
   function closeModal() {
-    lightboxModal.classList.add("hidden");
-    lightboxModal.classList.remove("flex");
-    lightboxImage.src = "";
+    lightbox.classList.replace("flex","hidden");
   }
 
-  function showImage(index) {
-    currentIndex = (index - 1 + totalImages) % totalImages + 1;
-    lightboxImage.src = `/images/gallery/${currentIndex}.jpg`;
+  // 3. Arrow navigation across all 108 images
+  function showImage(offset) {
+    // move currentIndex by offset, then wrap 1…108
+    let next = ((currentIndex - 1 + offset + fullImageCount) % fullImageCount) + 1;
+    currentIndex = next;
+    lightboxImg.src = `/images/gallery/${next}.jpg`;
   }
 
-  nextBtn.onclick = e => { e.stopPropagation(); showImage(currentIndex + 1); };
-  prevBtn.onclick = e => { e.stopPropagation(); showImage(currentIndex - 1); };
-  lightboxModal.onclick = e => {
-    if (e.target === lightboxModal) closeModal();
+  nextBtn.onclick = e => { e.stopPropagation(); showImage(1); };
+  prevBtn.onclick = e => { e.stopPropagation(); showImage(-1); };
+
+  // close on backdrop click
+  lightbox.onclick = e => {
+    if (e.target === lightbox) closeModal();
   };
 
-  // Keyboard support
+  // keyboard
   document.addEventListener("keydown", e => {
-    if (lightboxModal.classList.contains("flex")) {
-      if (e.key === "ArrowRight") showImage(currentIndex + 1);
-      if (e.key === "ArrowLeft") showImage(currentIndex - 1);
-      if (e.key === "Escape") closeModal();
-    }
+    if (!lightbox.classList.contains("flex")) return;
+    if (e.key === "ArrowRight") showImage(1);
+    if (e.key === "ArrowLeft")  showImage(-1);
+    if (e.key === "Escape")     closeModal();
   });
 
-  // Touch support (mobile swiping)
-  let touchStartX = null;
-  lightboxModal.addEventListener("touchstart", e => {
-    touchStartX = e.changedTouches[0].screenX;
+  // touch swipe
+  let startX = null;
+  lightbox.addEventListener("touchstart", e => {
+    startX = e.changedTouches[0].screenX;
   });
-  lightboxModal.addEventListener("touchend", e => {
-    if (touchStartX === null) return;
-    const touchEndX = e.changedTouches[0].screenX;
-    const deltaX = touchEndX - touchStartX;
-    if (Math.abs(deltaX) > 50) {
-      if (deltaX < 0) showImage(currentIndex + 1);
-      else showImage(currentIndex - 1);
-    }
-    touchStartX = null;
+  lightbox.addEventListener("touchend", e => {
+    if (startX === null) return;
+    let delta = e.changedTouches[0].screenX - startX;
+    if (Math.abs(delta) > 50) showImage(delta < 0 ? 1 : -1);
+    startX = null;
   });
 });
 </script>
+>
+
     <!-- Rentals Section -->
     <section id="rentals" class="py-20 bg-black text-white px-4 md:px-6">
         <div class="max-w-7xl mx-auto">
